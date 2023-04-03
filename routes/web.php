@@ -35,4 +35,6 @@ Route::middleware([
 
     Route::resource('/category',App\Http\Controllers\Dashboard\CategoryController::class);
     Route::resource('/post', App\Http\Controllers\Dashboard\PostController::class);
+
+    Route::post('/post/upload/{post}', [App\Http\Controllers\Dashboard\PostController::class,'upload'])->name('post.upload');
 });

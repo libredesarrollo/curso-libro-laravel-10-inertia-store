@@ -66,10 +66,55 @@
                 <jet-button type="submit">Send</jet-button>
             </template>
         </jet-form-section>
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="col-span-6">
+                            <div>
+                                <jet-label value="Image" />
+                                <jet-input class="w-full" type="file" @input="form.image = $event.target.files[0]" />
+                                <jet-input-error :message="errors.image" />
+                            </div>
+                        </div>
+
+                        <div class="col-span-6">
+                            <jet-label value="Image" />
+
+                            <o-upload v-model="form.image">
+                                <o-button tag="a" variant="primary">
+                                    <o-icon icon="upload"></o-icon>
+                                    <span>Click to upload</span>
+                                </o-button>
+                            </o-upload>
+                            <jet-input-error :message="errors.image" />
+                        </div>
+
+                        <div class="col-span-6" v-if="post.id">
+                            <o-upload v-model="dropFiles" multiple drag-drop>
+                                <section class="ex-center">
+                                    <p>
+                                        <o-icon icon="upload" size="is-large"> </o-icon>
+                                    </p>
+                                    <p>Drop your files here or click to upload</p>
+                                </section>
+                            </o-upload>
+                        </div>
+
+
+                        <div>
+                            <jet-button class="mt-3" @click="upload">Send</jet-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </app-layout>
 </template>
  
 <script>
+import { watch, ref } from "vue";
 import { useForm, router } from "@inertiajs/vue3";
 
 import AppLayout from "@/Layouts/AppLayout.vue";
@@ -80,6 +125,11 @@ import JetInput from "@/Components/TextInput.vue";
 import JetButton from "@/Components/PrimaryButton.vue";
 
 export default {
+    // data() {
+    //     return {
+    //         dropFiles: []
+    //     }
+    // },
     components: {
         AppLayout,
         JetInput,
@@ -91,7 +141,7 @@ export default {
     props: {
         errors: Object,
         post: Object,
-        categories: Object,
+        categories: Object
     },
     setup(props) {
         const form = useForm({
@@ -104,15 +154,38 @@ export default {
             type: props.post.type,
             posted: props.post.posted,
             category_id: props.post.category_id,
+            image: "",
         });
-
 
         function submit() {
             router.put(route("post.update", form.id), form);
         }
 
+        function upload() {
+            router.post(route("post.upload", form.id), form);
+        }
 
-        return { form, submit };
+        const dropFiles = ref([]);
+
+        watch(() => dropFiles, (currentValue, oldValue) => {
+            router.post(route("post.upload", props.post.id), {
+                "image": currentValue.value[currentValue.value.length - 1]
+            });
+        },
+            { deep: true });
+
+        return { form, submit, upload, dropFiles };
     },
+    // watch: {
+    //     dropFiles: {
+    //         handler(val) {
+    //             alert()
+    //             Inertia.post(route("post.upload", this.$page.props.post.id), {
+    //                 "image": val[val.length - 1]
+    //             });
+    //         }
+    //     }
+    // }
+
 };
 </script>

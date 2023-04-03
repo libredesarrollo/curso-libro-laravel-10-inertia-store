@@ -10,6 +10,7 @@ use App\Http\Requests\Post\Store;
 use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 
 class PostController extends Controller
@@ -26,7 +27,7 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::get();
-        return inertia("Dashboard/Post/Save",compact('categories'));
+        return inertia("Dashboard/Post/Save", compact('categories'));
     }
 
 
@@ -40,7 +41,7 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories = Category::get();
-        return inertia("Dashboard/Post/Save", compact('post','categories'));
+        return inertia("Dashboard/Post/Edit", compact('post', 'categories'));
     }
 
 
@@ -56,4 +57,19 @@ class PostController extends Controller
         $post->delete();
         return to_route('post.index')->with('message', "Deleted post successfully");
     }
+
+    public function upload(Request $request, Post $post)
+    {
+        $request->validate(
+            [
+                'image' => 'required|mimes:jpg,jpeg,png,gif|max:10240'
+            ]
+        );
+        Storage::disk("public_upload")->delete("image/post/" . $post->image);
+        $data['image'] = $filename = time() . "." . $request['image']->extension();
+        $request->image->move(public_path("image/post"), $filename);
+        $post->update($data);
+        return to_route('post.index')->with('message', "Upload image to post successfully");
+    }
+
 }
