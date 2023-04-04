@@ -110,7 +110,17 @@
             </div>
         </div>
 
-    </app-layout>
+    <div class="container mt-4" v-if="post.image">
+        <div class="card">
+            <div class="card-body">
+                <img class="max-w-xs rounded-md shadow-sm" :src="'/image/post/' + post.image" alt="">
+                <jet-danger-button class="mt-4" @click="form.delete(route('post.image-delete',form.id))">Delete</jet-danger-button>
+                <a :href="'/image/post/' + post.image" download="" class="ml-2 mt-4 link-button-default">Download</a>
+            </div>
+        </div>
+    </div>
+
+</app-layout>
 </template>
  
 <script>
@@ -123,6 +133,7 @@ import JetLabel from "@/Components/InputLabel.vue";
 import JetInputError from "@/Components/InputError.vue";
 import JetInput from "@/Components/TextInput.vue";
 import JetButton from "@/Components/PrimaryButton.vue";
+import JetDangerButton from "@/Components/DangerButton.vue";
 
 export default {
     // data() {
@@ -136,6 +147,7 @@ export default {
         JetInputError,
         JetLabel,
         JetButton,
+        JetDangerButton,
         JetFormSection,
     },
     props: {

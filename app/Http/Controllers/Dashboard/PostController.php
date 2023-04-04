@@ -72,4 +72,12 @@ class PostController extends Controller
         return to_route('post.index')->with('message', "Upload image to post successfully");
     }
 
+    public function imageDelete(Post $post)
+    {
+        Storage::disk("public_upload")->delete("image/post/" . $post->image);
+        $post->update(['image' => '']);
+        return to_route('post.edit', $post->id)->with('message', "image removed to post successfully");
+    }
+
+
 }
