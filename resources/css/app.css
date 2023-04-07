@@ -54,3 +54,7 @@
     padding: 10px;
 }
 /* CKEDITOR */
+
+:root{
+    --oruga-modal-content-padding:0
+}
