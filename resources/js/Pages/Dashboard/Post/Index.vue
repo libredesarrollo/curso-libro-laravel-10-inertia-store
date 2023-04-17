@@ -32,12 +32,14 @@
           <Link class="link-button-default my-3" :href="route('post.create')">Create</Link>
 
           <div class="grid grid-cols-2 gap-2 mb-2">
+            <jet-label value="Date From" />
+            <jet-label value="Date To" />
 
             <jet-input class="w-full" v-model="from" placeholder="Date From" type="date" />
             <jet-input class="w-full" v-model="to" placeholder="Date To" type="date" />
 
-            <jet-input class="w-full" v-debounce.500ms="customSearch" :debounce-events="['keyup']" v-model="search"
-              placeholder="Search..." />
+            <jet-input class="w-full" autofocus v-debounce.500ms="customSearch" :debounce-events="['keyup']"
+              v-model="search" placeholder="Search..." />
 
             <select @change="customSearch" class="rounded-md w-full border-gray-300" v-model="posted">
               <option :value="null">Posted</option>
@@ -62,6 +64,10 @@
             <div>
               <jet-button class="w-full" @click="customSearch"> Filter </jet-button>
             </div>
+            <div>
+              <jet-button @click="cleanSearch"> Clean </jet-button>
+            </div>
+
           </div>
 
 
@@ -97,8 +103,8 @@
                 <td class="p-2">{{ p.date }}</td>
                 <td class="p-2">{{ p.title.substring(0, 15) }}</td>
                 <td class="p-2"><textarea class="w-48">
-                                        {{ p.description }}
-                                      </textarea></td>
+                                                {{ p.description }}
+                                              </textarea></td>
                 <td class="p-2">
                   <Link class="text-sm text-purple-400 hover:text-purple-700" :href="route('post.edit', p.id)">Edit</Link>
                   <!-- <Link as="button" type="button" method="DELETE" class="text-sm text-red-400 hover:text-red-700 ml-2"
@@ -107,7 +113,7 @@
                     @click="
                       confirmDeleteActive = true;
                     deletePostRow = p.id;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ">
                     Delete
                   </o-button>
                 </td>
@@ -124,6 +130,7 @@
   
 <script>
 import { Link, router } from "@inertiajs/vue3";
+import JetLabel from "@/Components/InputLabel.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import Modal from "@/Components/Modal.vue";
 import JetButton from "@/Components/PrimaryButton.vue";
@@ -184,6 +191,9 @@ export default {
       this.column = column;
       this.customSearch();
     },
+    cleanSearch() {
+      router.get(route("post.index"));
+    },
   },
   components: {
     AppLayout,
@@ -192,7 +202,8 @@ export default {
     JetButton,
     JetInput,
     ConfirmationModal,
-    Modal
+    Modal,
+    JetLabel
   },
 };
 </script>
