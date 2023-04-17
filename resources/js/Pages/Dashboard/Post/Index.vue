@@ -36,7 +36,8 @@
             <jet-input class="w-full" v-model="from" placeholder="Date From" type="date" />
             <jet-input class="w-full" v-model="to" placeholder="Date To" type="date" />
 
-            <jet-input class="w-full"  v-debounce.500ms="customSearch" :debounce-events="['keyup']" v-model="search" placeholder="Search..." />
+            <jet-input class="w-full" v-debounce.500ms="customSearch" :debounce-events="['keyup']" v-model="search"
+              placeholder="Search..." />
 
             <select @change="customSearch" class="rounded-md w-full border-gray-300" v-model="posted">
               <option :value="null">Posted</option>
@@ -67,11 +68,26 @@
           <table class="w-full border">
             <thead class="bg-gray-100">
               <tr class="border-b">
-                <th class="p-3">Id</th>
+                <!-- <th class="p-3">Id</th>
                 <th class="p-3">Title</th>
                 <th class="p-3">Date</th>
                 <th class="p-3">Description</th>
-                <th class="p-3">Slug</th>
+                <th class="p-3">Slug</th> -->
+
+                <th v-for="(c, k) in columns" class="p-3" :key="c">
+                  <button @click="sort(k)">
+                    {{ c }}
+                    <template v-if="k == sortColumn">
+                      <template v-if="'asc' == sortDirection">
+                        &uarr;
+                      </template>
+                      <template v-else>
+                        &darr;
+                      </template>
+                    </template>
+                  </button>
+                </th>
+
                 <th class="p-3">Actions</th>
               </tr>
             </thead>
@@ -81,8 +97,8 @@
                 <td class="p-2">{{ p.date }}</td>
                 <td class="p-2">{{ p.title.substring(0, 15) }}</td>
                 <td class="p-2"><textarea class="w-48">
-                              {{ p.description }}
-                            </textarea></td>
+                                        {{ p.description }}
+                                      </textarea></td>
                 <td class="p-2">
                   <Link class="text-sm text-purple-400 hover:text-purple-700" :href="route('post.edit', p.id)">Edit</Link>
                   <!-- <Link as="button" type="button" method="DELETE" class="text-sm text-red-400 hover:text-red-700 ml-2"
@@ -91,8 +107,8 @@
                     @click="
                       confirmDeleteActive = true;
                     deletePostRow = p.id;
-                                                                                                                                                                                                                                                                                                                                                                                                ">
-                    Delete 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ">
+                    Delete
                   </o-button>
                 </td>
               </tr>
@@ -120,15 +136,21 @@ export default {
   props: {
     posts: Object,
     categories: Object,
+    columns: "",
     prop_type: String,
     prop_search: String,
     prop_posted: String,
     prop_category_id: String,
     prop_from: String,
     prop_to: String,
+    prop_sortDirection: String,
+    prop_sortColumn: String,
   },
   data() {
     return {
+      sortColumn: this.prop_sortColumn,
+      sortDirection: this.prop_sortDirection,
+      column: "id",
       confirmDeleteActive: false,
       deletePostRow: "",
       type: this.prop_type,
@@ -153,8 +175,14 @@ export default {
           search: this.search,
           from: this.from,
           to: this.to,
+          sortColumn: this.column,
+          sortDirection: this.sortDirection == 'asc' ? 'desc' : 'asc',
         })
       );
+    },
+    sort(column) {
+      this.column = column;
+      this.customSearch();
     },
   },
   components: {

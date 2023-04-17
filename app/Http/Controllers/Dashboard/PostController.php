@@ -16,10 +16,17 @@ use Illuminate\Support\Facades\Storage;
 class PostController extends Controller
 {
 
+    public $columns = [
+        'id' => 'Id',
+        'date' => 'Date',
+        'title' => 'Title',
+        'description' => 'Description',
+        'type' => 'Type',
+        'category_id' => 'Category',
+    ];
 
     public function index()
     {
-        $posts = Post::where("id", ">=", 1);
         $categories = Category::get();
 
         $search = request('search');
@@ -28,6 +35,11 @@ class PostController extends Controller
         $type = request('type');
         $from = request('from');
         $to = request('to');
+
+        $sortColumn = request('sortColumn') ?? 'id';
+        $sortDirection = request('sortDirection') ?? 'desc';
+
+        $posts = Post::with('category')->orderBy($sortColumn, $sortDirection);
 
         if (request('type')) {
             $posts->where('type', request("type"));
@@ -53,21 +65,17 @@ class PostController extends Controller
         $posts = $posts->paginate(10);
 
         return inertia("Dashboard/Post/Index", [
+            "columns" => $this->columns,
             'posts' => $posts,
-            'categories' => $categories
-            ,
-            'prop_type' => $type
-            ,
-            'prop_search' => $search
-            ,
-            'prop_category_id' => $category_id
-            ,
-            'prop_posted' => $posted
-            ,
-            'prop_from' => $from
-            ,
-            'prop_to' => $to
-
+            'categories' => $categories,
+            'prop_type' => $type,
+            'prop_search' => $search,
+            'prop_category_id' => $category_id,
+            'prop_posted' => $posted,
+            'prop_from' => $from,
+            'prop_to' => $to,
+            "prop_sortDirection" => $sortDirection,
+            "prop_sortColumn" => $sortColumn
         ]);
     }
 
