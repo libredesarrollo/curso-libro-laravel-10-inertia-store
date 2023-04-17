@@ -16,6 +16,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import CKEditor from '@ckeditor/ckeditor5-vue';
+import { vue3Debounce } from 'vue-debounce'
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -23,12 +24,19 @@ createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
-        return createApp({ render: () => h(App, props) })
+        const myApp = createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(CKEditor)
             .use(ZiggyVue, Ziggy)
-            .use(Oruga)
-            .mount(el);
+            .use(Oruga);
+
+        myApp.config.globalProperties.$step = 1;
+
+        myApp
+        .directive('debounce', vue3Debounce({ lock: true }))
+        .mount(el);
+        return myApp;
+
     },
     progress: {
         color: '#4B5563',
