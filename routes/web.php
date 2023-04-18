@@ -49,7 +49,14 @@ Route::group([
     'verified'
 ], function () {
     Route::resource('contact-general', GeneralController::class)->only(['create', 'edit', 'store', 'update']);
-    Route::resource('contact-company', App\Http\Controllers\Contact\CompanyController::class)->only(['create','edit','store','update']);
-    Route::resource('contact-person', App\Http\Controllers\Contact\PersonController::class)->only(['create','edit','store','update']);
-    Route::resource('contact-detail', App\Http\Controllers\Contact\DetailController::class)->only(['create','edit','store','update']);
+    Route::resource('contact-company', App\Http\Controllers\Contact\CompanyController::class)->only(['create', 'edit', 'store', 'update']);
+    Route::resource('contact-person', App\Http\Controllers\Contact\PersonController::class)->only(['create', 'edit', 'store', 'update']);
+    Route::resource('contact-detail', App\Http\Controllers\Contact\DetailController::class)->only(['create', 'edit', 'store', 'update']);
+});
+
+Route::group([
+    'prefix' => 'blog',
+], function () {
+    Route::get('/', [App\Http\Controllers\Blog\PostController::class, 'index'])->name("web.index");
+    Route::get('/{post:slug}', [App\Http\Controllers\Blog\PostController::class, 'show'])->name("web.show");
 });
