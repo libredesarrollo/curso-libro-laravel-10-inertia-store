@@ -49,7 +49,7 @@
 
             <select @change="customSearch" class="rounded-md w-full border-gray-300" v-model="type">
               <option :value="null">Type</option>
-              <option value="adverd">Adverd</option>
+              <option value="advert">Advert</option>
               <option value="post">Post</option>
               <option value="course">Course</option>
               <option value="movie">Movie</option>

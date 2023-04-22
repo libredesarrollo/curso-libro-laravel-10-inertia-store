@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,7 +40,10 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'flash' => [
                 'message' => $request->session()->get('message')
-            ]
+            ],
+            'cart' =>  session('cart', [])
+
+
         ]);
     }
 }

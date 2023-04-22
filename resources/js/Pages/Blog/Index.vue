@@ -1,5 +1,12 @@
 <template>
     <web-layout>
+        <div class="card">
+            <div class="card-body">
+                <h3>Carrito de compras</h3>
+                <cart />
+            </div>
+        </div>
+
         <div class="container">
             <div class="card">
                 <div class="card-body">
@@ -52,12 +59,12 @@
                     <div v-for="p in posts.data" class="p-3" :key="p">
                         <h4 class="text-center text-4xl mb-3">{{ p.title }}</h4>
                         <p class="
-                              text-center text-sm text-gray-500
-                              italic
-                              font-bold
-                              uppercase
-                              tracking-widest
-                            ">
+                                  text-center text-sm text-gray-500
+                                  italic
+                                  font-bold
+                                  uppercase
+                                  tracking-widest
+                                ">
                             {{ p.date }}
                         </p>
 
@@ -91,6 +98,8 @@
 import { Link } from "@inertiajs/vue3";
 import { router } from "@inertiajs/vue3";
 
+import Cart from "@/Fragment/Cart.vue";
+
 import WebLayout from "@/Layouts/WebLayout.vue";
 import JetLabel from "@/Components/InputLabel.vue";
 import JetInput from "@/Components/TextInput.vue";
@@ -108,6 +117,7 @@ export default {
         JetButton,
         JetInput,
         JetLabel,
+        Cart
     },
     props: {
         posts: Object,

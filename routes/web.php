@@ -60,3 +60,10 @@ Route::group([
     Route::get('/', [App\Http\Controllers\Blog\PostController::class, 'index'])->name("web.index");
     Route::get('/{post:slug}', [App\Http\Controllers\Blog\PostController::class, 'show'])->name("web.show");
 });
+
+Route::group([
+    'prefix' => 'shop',
+], function () {
+    Route::get('/', [App\Http\Controllers\Shop\CartController::class, 'index'])->name('shop.index');
+    Route::post('/add/{post}/{count}', [App\Http\Controllers\Shop\CartController::class, 'add'])->name('shop.add');
+});
