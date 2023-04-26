@@ -22,6 +22,7 @@
         "@ckeditor/ckeditor5-vue": "^4.0.1",
         "@mdi/font": "^7.2.96",
         "@oruga-ui/oruga-next": "^0.5.10",
-        "vue-debounce": "^4.0.0"
+        "vue-debounce": "^4.0.0",
+        "vuedraggable": "^4.1.0"
     }
 }

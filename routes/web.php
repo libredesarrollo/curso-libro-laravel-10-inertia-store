@@ -67,3 +67,14 @@ Route::group([
     Route::get('/', [App\Http\Controllers\Shop\CartController::class, 'index'])->name('shop.index');
     Route::post('/add/{post}/{count}', [App\Http\Controllers\Shop\CartController::class, 'add'])->name('shop.add');
 });
+
+Route::group([
+    'prefix' => 'todo',
+], function () {
+    Route::get('/', [App\Http\Controllers\TodoController::class, 'index'])->name('todo.index');
+    Route::post('store', [App\Http\Controllers\TodoController::class, 'store'])->name('todo.store');
+    Route::put('update/{todo}', [App\Http\Controllers\TodoController::class, 'update'])->name('todo.update');
+    Route::delete('destroy/{todo?}', [App\Http\Controllers\TodoController::class, 'destroy'])->name('todo.destroy');
+    Route::post('status/{todo}', [App\Http\Controllers\TodoController::class, 'status'])->name('todo.status');
+    Route::post('orden', [App\Http\Controllers\TodoController::class, 'orden'])->name('todo.orden');
+});
