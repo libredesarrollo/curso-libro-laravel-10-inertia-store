@@ -20,12 +20,12 @@
                 <h3>App To do</h3>
 
                 <form @submit.prevent="create" class="flex gap-2 mt-2">
-                    <jet-input :class="{ 'text-red-400 bg-red-200': errors.name }" placeholder="Create To Do"
+                    <jet-input :class="{ 'text-red-400 bg-red-200': form.error }" placeholder="Create To Do"
                         v-model="form.name" />
                     <jet-button>Create</jet-button>
                 </form>
 
-                <jet-input-error v-if="todoSelected == 0" :message="errors.name" />
+                <jet-input-error v-if="todoSelected == 0" :message="form.error" />
 
                 <ul id="list-to-do">
                     <draggable v-model="todos" item-key="id" @end="order">
@@ -97,6 +97,7 @@ import JetButton from "@/Components/PrimaryButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 
 import { router } from "@inertiajs/vue3";
+import axios from "axios";
 
 export default {
     components: {
@@ -116,7 +117,8 @@ export default {
         return {
             todos: this.prop_todos,
             form: {
-                name: ''
+                name: '',
+                error: ''
             },
             todoSelected: 0,  // 0 create, >0 update
             confirmDeleteActive: false,
@@ -140,12 +142,28 @@ export default {
             });
         },
         create() {
-            this.todoSelected = 0;
-            router.post(
-                route("todo.store", {
+            this.todoSelected = 0
+            this.form.error  = ''
+            //this.todos.push();
+            // router.post(
+            //     route("todo.store", {
+            //         name: this.form.name,
+            //     }
+            //     )
+            // );
+
+            axios.post(route("todo.store", {
                     name: this.form.name,
+                })).then((todo)=> {
+                    console.log(todo)
+                    this.todos.push(todo.data)
+                }).catch((error) => {
+                    console.log(error.response.data.error)
+                    this.form.error = error.response.data.error
                 })
-            );
+
+            this.form.name = ''
+
         },
         update(todo) {
             this.todoSelected = todo.id;
@@ -156,9 +174,11 @@ export default {
         },
         destroy() {
             this.confirmDeleteActive = false;
+            this.todos = this.todos.filter((t) => t.id != this.deleteTodoRow) // devolvemos un array de todos los elementos que NO queremos eliminar
             router.delete(route("todo.destroy", this.deleteTodoRow));
         },
         destroyAll() {
+            this.todos = []; // elimina todos los to do
             router.delete(route("todo.destroy"));
         },
 

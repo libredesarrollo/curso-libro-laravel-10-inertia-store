@@ -3,7 +3,8 @@
 
 namespace App\Http\Controllers;
 
-
+use Response;
+use Validator;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 
@@ -17,17 +18,32 @@ class TodoController extends Controller
     }
     public function store(Request $request)
     {
-        $data = $request->validate(
-            [
-                'name' => "required|min:2|max:255",
-            ]
-        );
-        Todo::create([
-            'name' => $data['name'],
+
+        $validator = Validator::make($request->all(), [
+            'name' => "required|min:2|max:255",
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json([
+                'error' => $validator->errors()->get('name')[0]
+            ], 400);
+        }
+
+        // $data = $request->validate(
+        //     [
+        //         'name' => "required|min:2|max:255",
+        //     ]
+        // );
+
+        $todo = Todo::create([
+            'name' => $request->name,
             'user_id' => auth()->id(),
             'count' => Todo::where('user_id', auth()->id())->count()
         ]);
-        return back();
+
+        return response()->json($todo);
+
+        //return back();
     }
 
     public function update(Todo $todo, Request $request)
@@ -41,9 +57,12 @@ class TodoController extends Controller
         Todo::where("id", $todo['id'])->where('user_id', auth()->id())->update(['name' => $data['name']]);
         return back();
     }
-    public function destroy(Todo $todo)
-    {
-        Todo::where("id", $todo->id)->where('user_id', auth()->id())->delete();
+    public function destroy(Todo $todo = null)
+    {  
+        if ($todo == null)
+            Todo::where('user_id', auth()->id())->delete();
+        else
+            Todo::where('user_id', auth()->id())->where('id', $todo->id)->delete();
         return back();
     }
 
